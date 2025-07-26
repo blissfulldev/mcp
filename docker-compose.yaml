@@ -1,0 +1,24 @@
+services:
+  aws-diagram:
+    build:
+      context: ./src/aws-diagram-mcp-server
+      dockerfile: Dockerfile
+    container_name: aws-diagram
+    ports:
+      - "8001:8001"
+  
+  core-mcp:
+    build:
+      context: ./src/core-mcp-server
+      dockerfile: Dockerfile
+    container_name: core-mcp
+    ports:
+      - "8000:8000"
+
+  terraform-mcp:
+    build:
+      context: ./src/terraform-mcp-server
+      dockerfile: Dockerfile
+    container_name: terraform-mcp
+    ports:
+      - "8002:8002"

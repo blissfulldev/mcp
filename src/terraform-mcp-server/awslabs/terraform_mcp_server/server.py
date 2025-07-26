@@ -46,9 +46,10 @@ from awslabs.terraform_mcp_server.static import (
     MCP_INSTRUCTIONS,
     TERRAFORM_WORKFLOW_GUIDE,
 )
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from pydantic import Field
 from typing import Any, Dict, List, Literal, Optional
+import argparse
 
 
 mcp = FastMCP(
@@ -433,7 +434,20 @@ async def terraform_aws_best_practices() -> str:
 
 def main():
     """Run the MCP server with CLI argument support."""
-    mcp.run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", type=str, default="stdio")
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8002)
+    
+    args = parser.parse_args()
+    if args.transport == "streamable-http" or args.transport == "http":
+        mcp.run(
+            transport=args.transport,
+            host=args.host,
+            port=args.port
+        )
+    else:
+        mcp.run()
 
 
 if __name__ == '__main__':

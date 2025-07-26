@@ -24,9 +24,10 @@ from awslabs.aws_diagram_mcp_server.diagrams_tools import (
     list_diagram_icons,
 )
 from awslabs.aws_diagram_mcp_server.models import DiagramType
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from pydantic import Field
 from typing import Optional
+import argparse
 
 
 # Create the MCP server
@@ -265,8 +266,20 @@ async def mcp_list_diagram_icons(
 
 def main():
     """Run the MCP server with CLI argument support."""
-    mcp.run()
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", type=str, default="stdio")
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8001)
+    
+    args = parser.parse_args()
+    if args.transport == "streamable-http" or args.transport == "http":
+        mcp.run(
+            transport=args.transport,
+            host=args.host,
+            port=args.port
+        )
+    else:
+        mcp.run()
 
 if __name__ == '__main__':
     main()

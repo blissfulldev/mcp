@@ -76,6 +76,6 @@ COPY ./docker-healthcheck.sh /usr/local/bin/docker-healthcheck.sh
 # Run as non-root
 USER app
 
-# When running the container, add --db-path and a bind mount to the host's db file
+# When running the container
 HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 CMD ["docker-healthcheck.sh"]
-ENTRYPOINT ["awslabs.aws-diagram-mcp-server"]
+ENTRYPOINT ["awslabs.aws-diagram-mcp-server", "--transport", "streamable-http", "--host", "0.0.0.0", "--port", "8001"]

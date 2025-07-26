@@ -15,9 +15,9 @@
 import loguru
 import sys
 from awslabs.core_mcp_server.static import PROMPT_UNDERSTANDING
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from typing import List, TypedDict
-
+import argparse
 
 class ContentItem(TypedDict):
     """A TypedDict representing a single content item in an MCP response.
@@ -76,7 +76,20 @@ async def get_prompt_understanding() -> str:
 
 def main() -> None:
     """Run the MCP server."""
-    mcp.run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", type=str, default="stdio")
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8000)
+    
+    args = parser.parse_args()
+    if args.transport == "streamable-http" or args.transport == "http":
+        mcp.run(
+            transport=args.transport,
+            host=args.host,
+            port=args.port
+        )
+    else:
+        mcp.run()
 
 
 if __name__ == '__main__':  # pragma: no cover
