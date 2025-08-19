@@ -6,6 +6,8 @@ services:
     container_name: aws-diagram
     ports:
       - "8001:8001"
+    networks:
+      - mcp_net
   
   core-mcp:
     build:
@@ -14,6 +16,8 @@ services:
     container_name: core-mcp
     ports:
       - "8000:8000"
+    networks:
+      - mcp_net
 
   terraform-mcp:
     build:
@@ -22,3 +26,11 @@ services:
     container_name: terraform-mcp
     ports:
       - "8002:8002"
+    networks:
+      - mcp_net
+
+networks:
+  mcp_net:
+    external: true
+    name: mcp_net
+    driver: bridge

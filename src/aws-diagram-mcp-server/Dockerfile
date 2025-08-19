@@ -92,4 +92,4 @@ USER app
 
 # When running the container
 HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 CMD ["docker-healthcheck.sh"]
-ENTRYPOINT ["awslabs.aws-diagram-mcp-server", "--transport", "streamable-http", "--host", "0.0.0.0", "--port", "8001"]
+ENTRYPOINT ["awslabs.aws-diagram-mcp-server", "--transport", "sse", "--host", "0.0.0.0", "--port", "8001"]

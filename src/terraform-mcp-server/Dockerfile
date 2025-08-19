@@ -85,4 +85,4 @@ USER app
 
 # When running the container, add --db-path and a bind mount to the host's db file
 HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 CMD ["docker-healthcheck.sh"]
-ENTRYPOINT ["awslabs.terraform-mcp-server", "--transport", "streamable-http", "--host", "0.0.0.0", "--port", "8002"]
+ENTRYPOINT ["awslabs.terraform-mcp-server", "--transport", "sse", "--host", "0.0.0.0", "--port", "8002"]

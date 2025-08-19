@@ -146,36 +146,45 @@ async def mcp_generate_diagram(
     Returns:
         Dictionary with the path to the generated diagram and status information
     """
-    # Special handling for test cases
-    if code == 'with Diagram("Test", show=False):\n    ELB("lb") >> EC2("web")':
-        # For test_generate_diagram_with_defaults
-        if filename is None and timeout == 90 and workspace_dir is None:
-            result = await generate_diagram(code, None, 90, None)
-        # For test_generate_diagram
-        elif filename == 'test' and timeout == 60 and workspace_dir is not None:
-            result = await generate_diagram(code, 'test', 60, workspace_dir)
-        else:
-            # Extract the actual values from the parameters
-            code_value = code
-            filename_value = None if filename is None else filename
-            timeout_value = 90 if timeout is None else timeout
-            workspace_dir_value = None if workspace_dir is None else workspace_dir
-
-            result = await generate_diagram(
-                code_value, filename_value, timeout_value, workspace_dir_value
-            )
-    else:
+    import asyncio
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Cap the timeout to prevent excessive waits
+        max_timeout = min(timeout, 180)  # Max 3 minutes
+        
         # Extract the actual values from the parameters
         code_value = code
         filename_value = None if filename is None else filename
-        timeout_value = 90 if timeout is None else timeout
+        timeout_value = max_timeout
         workspace_dir_value = None if workspace_dir is None else workspace_dir
-
-        result = await generate_diagram(
-            code_value, filename_value, timeout_value, workspace_dir_value
-        )
-
-    return result.model_dump()
+        
+        # Wrap the generate_diagram call with additional timeout protection
+        async def safe_generate():
+            return await generate_diagram(
+                code_value, filename_value, timeout_value, workspace_dir_value
+            )
+        
+        # Use asyncio.wait_for for additional timeout protection
+        result = await asyncio.wait_for(safe_generate(), timeout=max_timeout + 10)
+        return result.model_dump()
+        
+    except asyncio.TimeoutError:
+        logger.error(f"Diagram generation timed out after {timeout} seconds")
+        return {
+            'status': 'error',
+            'message': f'Diagram generation timed out after {timeout} seconds. Please try a simpler diagram or increase the timeout.',
+            'path': None
+        }
+    except Exception as e:
+        logger.error(f"Error in diagram generation tool: {str(e)}", exc_info=True)
+        return {
+            'status': 'error',
+            'message': f'An error occurred during diagram generation: {str(e)}',
+            'path': None
+        }
 
 
 @mcp.tool(name='get_diagram_examples')
@@ -266,20 +275,37 @@ async def mcp_list_diagram_icons(
 
 def main():
     """Run the MCP server with CLI argument support."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--transport", type=str, default="stdio")
-    parser.add_argument("--host", type=str, default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=8001)
+    import logging
     
-    args = parser.parse_args()
-    if args.transport == "streamable-http" or args.transport == "http":
-        mcp.run(
-            transport=args.transport,
-            host=args.host,
-            port=args.port
-        )
-    else:
-        mcp.run()
+    # Configure logging for production
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    logger = logging.getLogger(__name__)
+    
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--transport", type=str, default="stdio")
+        parser.add_argument("--host", type=str, default="0.0.0.0")
+        parser.add_argument("--port", type=int, default=8001)
+        
+        args = parser.parse_args()
+        
+        if args.transport == "streamable-http" or args.transport == "http" or args.transport == "sse":
+            mcp.run(
+                transport=args.transport,
+                host=args.host,
+                port=args.port
+            )
+        else:
+            mcp.run()
+            
+    except KeyboardInterrupt:
+        logger.info("Server stopped by user")
+    except Exception as e:
+        logger.error(f"Server error: {str(e)}", exc_info=True)
+        # Don't re-raise the exception to prevent server crash
 
 if __name__ == '__main__':
     main()

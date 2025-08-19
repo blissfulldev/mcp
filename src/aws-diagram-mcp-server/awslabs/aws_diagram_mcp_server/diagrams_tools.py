@@ -14,13 +14,14 @@
 
 """Diagram generation and example functions for the diagrams-mcp-server."""
 
+import asyncio
+import concurrent.futures
 import diagrams
 import importlib
 import inspect
 import logging
 import os
 import re
-import signal
 import uuid
 from awslabs.aws_diagram_mcp_server.models import (
     DiagramExampleResponse,
@@ -38,7 +39,7 @@ logger = logging.getLogger(__name__)
 async def generate_diagram(
     code: str,
     filename: Optional[str] = None,
-    timeout: int = 90,
+    timeout: int = 120,
     workspace_dir: Optional[str] = None,
 ) -> DiagramGenerateResponse:
     """Generate a diagram from Python code using the `diagrams` package.
@@ -292,20 +293,25 @@ from diagrams.aws.enduser import *
                 # Replace in the code
                 code = code.replace(f'with Diagram({original_args})', f'with Diagram({new_args})')
 
-        # Set up a timeout handler
-        def timeout_handler(signum, frame):
-            raise TimeoutError(f'Diagram generation timed out after {timeout} seconds')
+        # Execute the code with asyncio timeout instead of signal-based timeout
+        import asyncio
+        import concurrent.futures
+        
+        def execute_code():
+            # Execute the code in a thread to avoid blocking
+            # nosec B102 - This exec is necessary to run user-provided diagram code in a controlled environment
+            exec(code, namespace)  # nosem: python.lang.security.audit.exec-detected.exec-detected
 
-        # Register the timeout handler
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(timeout)
-
-        # Execute the code
-        # nosec B102 - This exec is necessary to run user-provided diagram code in a controlled environment
-        exec(code, namespace)  # nosem: python.lang.security.audit.exec-detected.exec-detected
-
-        # Cancel the alarm
-        signal.alarm(0)
+        # Run the code execution in a thread pool with timeout
+        loop = asyncio.get_event_loop()
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            try:
+                await asyncio.wait_for(
+                    loop.run_in_executor(executor, execute_code), 
+                    timeout=timeout
+                )
+            except asyncio.TimeoutError:
+                raise TimeoutError(f'Diagram generation timed out after {timeout} seconds')
 
         # Check if the file was created
         png_path = f'{output_path}.png'
@@ -322,12 +328,14 @@ from diagrams.aws.enduser import *
                 status='error',
                 message='Diagram file was not created. Check your code for errors.',
             )
-    except TimeoutError as e:
+    except (TimeoutError, asyncio.TimeoutError) as e:
+        logger.error(f"Diagram generation timed out: {str(e)}")
         return DiagramGenerateResponse(status='error', message=str(e))
     except Exception as e:
         # More detailed error logging
         error_type = type(e).__name__
         error_message = str(e)
+        logger.error(f"Error generating diagram: {error_type}: {error_message}", exc_info=True)
         return DiagramGenerateResponse(
             status='error', message=f'Error generating diagram: {error_type}: {error_message}'
         )

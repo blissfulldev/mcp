@@ -82,7 +82,7 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8000)
     
     args = parser.parse_args()
-    if args.transport == "streamable-http" or args.transport == "http":
+    if args.transport == "streamable-http" or args.transport == "http" or args.transport == "sse":
         mcp.run(
             transport=args.transport,
             host=args.host,
