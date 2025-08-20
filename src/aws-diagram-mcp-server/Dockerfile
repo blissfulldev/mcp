@@ -18,6 +18,9 @@ FROM public.ecr.aws/docker/library/python:3.13.5-alpine3.21@sha256:c9a09c45a4bcc
 # Install the project into `/app`
 WORKDIR /app
 
+# Ensure generated-diagrams directory exists
+RUN mkdir -p /app/generated-diagrams
+
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 

@@ -8,6 +8,8 @@ services:
       - "8001:8001"
     networks:
       - mcp_net
+    volumes:
+      - ${DIAGRAMS_VOLUME:-./src/aws-diagram-mcp-server/generated-diagrams}:/app/generated-diagrams
   
   core-mcp:
     build:
@@ -28,6 +30,8 @@ services:
       - "8002:8002"
     networks:
       - mcp_net
+    volumes:
+      - ${TERRAFORM_VOLUME:-./src/terraform-mcp-server/terraform-projects}:/app/terraform-projects
 
 networks:
   mcp_net:

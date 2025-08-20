@@ -18,6 +18,8 @@ FROM public.ecr.aws/docker/library/python:3.13-slim-bookworm@sha256:6544e0e002b4
 # Install the project into `/app`
 WORKDIR /app
 
+# Ensure terraform-projects directory exists
+RUN mkdir -p /app/terraform-projects
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
@@ -64,6 +66,7 @@ RUN echo $TERRAFORM_VERSION
 RUN out=$(mktemp) && \
     apt-get update -y && \
     apt-get install -y wget unzip procps && \
+    apt-get install -y git && \
     (wget -nv -O$out wget "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_$(dpkg --print-architecture).zip" || echo "Getting Network Error 4 ? $?" ) && \
     unzip "$out" -d /usr/local/bin/ && \
     chmod +x /usr/local/bin/terraform && \
