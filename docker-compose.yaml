@@ -8,8 +8,10 @@ services:
       - "8001:8001"
     networks:
       - mcp_net
+    environment:
+      - DIAGRAMS_CONTAINER_DIRECTORY=/app/generated-diagrams
     volumes:
-      - ${DIAGRAMS_VOLUME:-./src/aws-diagram-mcp-server/generated-diagrams}:/app/generated-diagrams
+      - ${DIAGRAMS_HOST_DIRECTORY:-./workspace/generated-diagrams}:${DIAGRAMS_CONTAINER_DIRECTORY}
   
   core-mcp:
     build:
@@ -30,8 +32,10 @@ services:
       - "8002:8002"
     networks:
       - mcp_net
+    environment:
+      - TERRAFORM_MCP_DIRECTORY=/app/terraform-projects
     volumes:
-      - ${TERRAFORM_VOLUME:-./src/terraform-mcp-server/terraform-projects}:/app/terraform-projects
+      - ${TERRAFORM_HOST_DIRECTORY:-./workspace/terraform-projects}:${TERRAFORM_MCP_DIRECTORY}
 
 networks:
   mcp_net:
