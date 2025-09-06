@@ -64,6 +64,7 @@ const sidebars: SidebarsConfig = {
             'servers/amazon-qindex-mcp-server',
             'servers/amazon-qbusiness-anonymous-mcp-server',
             'servers/nova-canvas-mcp-server',
+            'servers/aws-bedrock-custom-model-import-mcp-server'
           ],
         },
         {
@@ -129,7 +130,10 @@ const sidebars: SidebarsConfig = {
         {
           type: 'category',
           label: 'Healthcare & Lifesciences',
-          items: ['servers/aws-healthomics-mcp-server'],
+          items: [
+            'servers/aws-healthomics-mcp-server',
+            'servers/healthlake-mcp-server',
+          ],
         },
       ],
     },
