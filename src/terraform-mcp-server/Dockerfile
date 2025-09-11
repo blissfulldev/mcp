@@ -54,7 +54,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # RUN mkdir -p /root/.local
 
 FROM public.ecr.aws/docker/library/python:3.13-slim-bookworm@sha256:6544e0e002b40ae0f59bc3618b07c1e48064c4faed3a15ae2fbd2e8f663e8283
-ARG TERRAFORM_VERSION="1.12.2"
+ARG TERRAFORM_VERSION="1.13.0"
 # Place executables in the environment at the front of the path and include other binaries
 ENV PATH="/app/.venv/bin:$PATH:/usr/sbin"
 

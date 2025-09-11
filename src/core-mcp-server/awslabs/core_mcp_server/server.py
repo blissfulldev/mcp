@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import asyncio
 import loguru
 import os
@@ -550,9 +551,21 @@ async def setup():
 
 
 def main() -> None:
-    """Run the MCP server."""
-    asyncio.run(setup())
-    mcp.run()
+    """Run the MCP server with CLI argument support."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", type=str, default="stdio")
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8002)
+    
+    args = parser.parse_args()
+    if args.transport == "streamable-http" or args.transport == "http" or args.transport == "sse":
+        mcp.run(
+            transport=args.transport,
+            host=args.host,
+            port=args.port
+        )
+    else:
+        mcp.run()
 
 
 if __name__ == '__main__':  # pragma: no cover
