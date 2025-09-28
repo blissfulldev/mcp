@@ -9,9 +9,9 @@ services:
     networks:
       - mcp_net
     environment:
-      - DIAGRAMS_CONTAINER_DIRECTORY=/app/generated-diagrams
+      DIAGRAMS_DATA_DIR: ${DIAGRAMS_DATA_DIR:-/data/diagrams}
     volumes:
-      - ${DIAGRAMS_HOST_DIRECTORY:-./workspace/generated-diagrams}:${DIAGRAMS_CONTAINER_DIRECTORY}
+      - ${DIAGRAMS_HOST_PATH:-/home/DevOps/Projects/devops-ai/workspace/generated-diagrams}:${DIAGRAMS_DATA_DIR:-/data/diagrams}
   
   core-mcp:
     build:
@@ -41,9 +41,9 @@ services:
     networks:
       - mcp_net
     environment:
-      - TERRAFORM_CONTAINER_DIRECTORY=/app/terraform-projects
+      TERRAFORM_DATA_DIR: ${TERRAFORM_DATA_DIR:-/data/terraform}
     volumes:
-      - ${TERRAFORM_HOST_DIRECTORY:-./workspace/terraform-projects}:${TERRAFORM_CONTAINER_DIRECTORY}
+      - ${TERRAFORM_HOST_PATH:-/home/DevOps/Projects/devops-ai/workspace/terraform-projects}:${TERRAFORM_DATA_DIR:-/data/terraform}
 
 networks:
   mcp_net:

@@ -90,9 +90,13 @@ async def generate_diagram(
         # (for relative paths with directories like "path/to/diagram.png")
         simple_filename = os.path.basename(filename)
 
+        env_output_dir = os.environ.get('DIAGRAMS_DATA_DIR')
+
         if workspace_dir and os.path.isdir(workspace_dir) and os.access(workspace_dir, os.W_OK):
             # Create a "generated-diagrams" subdirectory in the workspace
             output_dir = os.path.join(workspace_dir, 'generated-diagrams')
+        elif env_output_dir:
+            output_dir = env_output_dir
         else:
             # Fall back to a secure temporary directory if workspace_dir isn't provided or isn't writable
             import tempfile
