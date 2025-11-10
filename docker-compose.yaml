@@ -13,23 +13,23 @@ services:
     volumes:
       - ${DIAGRAMS_HOST_PATH:-/home/DevOps/Projects/devops-ai/workspace/generated-diagrams}:${DIAGRAMS_DATA_DIR:-/data/diagrams}
   
-  core-mcp:
-    build:
-      context: ./src/core-mcp-server
-      dockerfile: Dockerfile
-    container_name: core-mcp
-    ports:
-      - "8000:8000"
-    networks:
-      - mcp_net
-    environment:
-      aws-foundation: "true"
-      dev-tools: "true"
-      ci-cd-devops: "true"
-      container-orchestration: "true"
-      serverless-architecture: "true"
-      solutions-architect: "true"
-      security-identity: "true"
+  # core-mcp:
+  #   build:
+  #     context: ./src/core-mcp-server
+  #     dockerfile: Dockerfile
+  #   container_name: core-mcp
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - mcp_net
+  #   environment:
+  #     aws-foundation: "true"
+  #     dev-tools: "true"
+  #     ci-cd-devops: "true"
+  #     container-orchestration: "true"
+  #     serverless-architecture: "true"
+  #     solutions-architect: "true"
+  #     security-identity: "true"
 
   terraform-mcp:
     build:

@@ -135,6 +135,10 @@ async def execute_terraform_command_impl(
     # Build the command
     cmd = ['terraform', request.command]
 
+    # Always disable interactive prompts for API-driven usage
+    if request.command in ['init', 'plan', 'apply', 'destroy']:
+        cmd.append('-input=false')
+
     # Add auto-approve flag for apply and destroy commands to make them non-interactive
     if request.command in ['apply', 'destroy']:
         logger.info(f'Adding -auto-approve flag to {request.command} command')

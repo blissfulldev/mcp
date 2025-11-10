@@ -559,21 +559,6 @@ wheels = [
 ]
 
 [[package]]
-name = "awslabs-cloudwatch-logs-mcp-server"
-version = "0.0.7"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "boto3" },
-    { name = "loguru" },
-    { name = "mcp", extra = ["cli"] },
-    { name = "pydantic" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2f/8a/6b5684eaba95ac9d2fdb5019df8dc2b9ea7dabbf6fc48f989c2436308736/awslabs_cloudwatch_logs_mcp_server-0.0.7.tar.gz", hash = "sha256:4320cdc86aa15957e58dbf9937351624dc81b9d86d2a6b5e05c4e81b0c92d073", size = 91003, upload-time = "2025-08-21T18:24:02.21Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/f0/f5bedc80f4592613812cd25f84e2fe22f63da258cc86858545ebcbabbfe0/awslabs_cloudwatch_logs_mcp_server-0.0.7-py3-none-any.whl", hash = "sha256:eacd8a2117c15d8cb9e810fec4f30a44fbcb4cb1f4ebd9c6550e7c3b3058c32a", size = 19519, upload-time = "2025-08-21T18:24:00.934Z" },
-]
-
-[[package]]
 name = "awslabs-cloudwatch-mcp-server"
 version = "0.0.10"
 source = { registry = "https://pypi.org/simple" }
@@ -606,7 +591,7 @@ wheels = [
 
 [[package]]
 name = "awslabs-core-mcp-server"
-version = "1.0.9"
+version = "1.0.11"
 source = { editable = "." }
 dependencies = [
     { name = "awslabs-amazon-kendra-index-mcp-server" },
@@ -629,7 +614,6 @@ dependencies = [
     { name = "awslabs-cfn-mcp-server" },
     { name = "awslabs-cloudtrail-mcp-server" },
     { name = "awslabs-cloudwatch-appsignals-mcp-server" },
-    { name = "awslabs-cloudwatch-logs-mcp-server" },
     { name = "awslabs-cloudwatch-mcp-server" },
     { name = "awslabs-code-doc-gen-mcp-server" },
     { name = "awslabs-cost-analysis-mcp-server" },
@@ -696,7 +680,6 @@ requires-dist = [
     { name = "awslabs-cfn-mcp-server", specifier = ">=1.0.6" },
     { name = "awslabs-cloudtrail-mcp-server", specifier = ">=0.0.1" },
     { name = "awslabs-cloudwatch-appsignals-mcp-server", specifier = ">=0.1.4" },
-    { name = "awslabs-cloudwatch-logs-mcp-server", specifier = ">=0.0.4" },
     { name = "awslabs-cloudwatch-mcp-server", specifier = ">=0.0.7" },
     { name = "awslabs-code-doc-gen-mcp-server", specifier = ">=1.0.2" },
     { name = "awslabs-cost-analysis-mcp-server", specifier = ">=1.0.5" },
